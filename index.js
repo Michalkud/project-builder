@@ -38,6 +38,8 @@ const execCommand = function(command) {
     await execCommand(`git pull origin sandbox`);
     // yarn command which builds project
     await execCommand(`yarn updateDeps`);
+    // Deletion of duplicated types
+    await execCommand(`rm -r components/kohinoor/node_modules/@types/`);
   } catch(e) {
     console.error(e);
   }
