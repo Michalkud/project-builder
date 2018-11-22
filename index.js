@@ -2,15 +2,16 @@
 const exec = require('child_process').exec;
 
 // frontend dir
-const frontendDir = './../foxer360/frontend/'
+const frontendDir = './../foxer360/frontend/';
+const serverDir = './../foxer360/server/';
 
 // Commands executor
-const execCommand = function(command) {
+const execCommand = function(command, cwd) {
   return new Promise(function(resolve, reject) {
     exec(
       command,
       {
-        cwd: frontendDir,
+        cwd,
         stdio:[0,1,2]
       },
       function(err, stdout, stderr) {
@@ -34,12 +35,17 @@ const execCommand = function(command) {
 
 (async function() {
   try {
-    // git clone from origin to actual branch
-    await execCommand(`git pull origin sandbox`);
+    // git pull from origin to sandbox branch
+    await execCommand(`git pull origin sandbox`, frontendDir);
     // yarn command which builds project
-    await execCommand(`yarn updateDeps`);
+    await execCommand(`yarn updateDeps`, frontendDir);
     // Deletion of duplicated types
-    await execCommand(`rm -r components/kohinoor/node_modules/@types/`);
+    await execCommand(`rm -r components/kohinoor/node_modules/@types/`, frontendDir);
+
+    // git pull from origin to sandbox branch
+    await execCommand(`git pull origin sandbox`, serverDir);
+    // Prisma deploy
+    await execCommand(`prisma deploy`, serverDir);
   } catch(e) {
     console.error(e);
   }
