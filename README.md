@@ -3,7 +3,7 @@
 Simple node.js server which will build my projects.
 
 - [] on one script run building of project
-  - [] git clone from origin to actual branch
+  - [X] git clone from origin to actual branch
   - [] yarn command which builds project
   - [] prisma deploy
   - [] deletion of duplicated types
