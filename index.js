@@ -1,6 +1,9 @@
 // child process which will be executing scripts
 const exec = require('child_process').exec;
 
+// frontend dir
+const frontendDir = './../foxer360/frontend/'
+
 // Commands executor
 const execCommand = function(command, cb) {
   const child = exec(command, function(err, stdout, stderr) {
@@ -17,9 +20,12 @@ const execCommand = function(command, cb) {
 
 // git clone from origin to actual branch
 
-execCommand("git --git-dir=./../foxer360/frontend/.git pull origin sandbox", function(err, response) {
+execCommand(`git --git-dir=${frontendDir}.git pull origin sandbox`, function(err, response) {
   if (!err) {
     console.log(response);
+    execCommand(`yarn --cwd=${frontendDir} updateDeps`, function(err, res) {
+      console.log(err, res);
+    })
   } else {
     console.log(err);
   }
