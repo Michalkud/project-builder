@@ -5,33 +5,47 @@ const exec = require('child_process').exec;
 const frontendDir = './../foxer360/frontend/'
 
 // Commands executor
-const execCommand = function(command, cb) {
-  const child = exec(command, function(err, stdout, stderr) {
-    if (err) {
-      return cb(err, null);
-    } else if (typeof(stderr) != "string") {
-      return cb(new Error(stderr, null));
-    } else {
-      return cb(null, stdout);
-    }
+const execCommand = function(command) {
+  return new Promise(function(resolve, reject) {
+    exec(
+      command,
+      {
+        cwd: frontendDir,
+        stdio:[0,1,2]
+      },
+      function(err, stdout, stderr) {
+        if (err) {
+          console.log(err);
+          return reject(err);
+        } else if (typeof(stderr) != "string") {
+          console.log(stderr);
+          return reject(stderr);
+        } else {
+          console.log(stdout);
+          return resolve(stdout);
+        }
+      });
   });
-}
+};
 
 
-// git clone from origin to actual branch
 
-execCommand(`git --git-dir=${frontendDir}.git pull origin sandbox`, function(err, response) {
-  if (!err) {
-    console.log(response);
-    execCommand(`yarn --cwd=${frontendDir} updateDeps`, function(err, res) {
-      console.log(err, res);
-    })
-  } else {
-    console.log(err);
+
+
+(async function() {
+  try {
+    // git clone from origin to actual branch
+    await execCommand(`git pull origin sandbox`);
+    // yarn command which builds project
+    await execCommand(`yarn updateDeps`);
+  } catch(e) {
+    console.error(e);
   }
-});
+})()
 
-// yarn command which builds project
+
+
+
 // deletion of duplicated types
 // prisma deploy
 
